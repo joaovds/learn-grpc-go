@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 
 	"github.com/joaovds/learn-grpc-go/internal/db"
 	"github.com/joaovds/learn-grpc-go/internal/pb"
@@ -63,3 +64,29 @@ func (a *AuthorService) GetAuthor(ctx context.Context, in *pb.GetById) (*pb.Auth
     Description: author.Description,
   }, nil
 }
+
+func (a *AuthorService) CreateAuthorStream(stream pb.AuthorService_CreateAuthorStreamServer) error {
+  authors := make([]*pb.Author, 4)
+
+  for {
+    author, err := stream.Recv()
+    if err == io.EOF {
+      return stream.SendAndClose(&pb.AuthorList{Authors: authors})
+    }
+    if err != nil {
+      return err
+    }
+
+    result, err := a.AuthorDB.Create(author.Name, author.Description)
+    if err != nil {
+      return err
+    }
+
+    authors = append(authors, &pb.Author{
+      Id:          result.ID,
+      Name:        result.Name,
+      Description: result.Description,
+    })
+  }
+}
+
