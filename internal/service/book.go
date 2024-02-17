@@ -31,3 +31,24 @@ func (b *BookService) CreateBook(ctx context.Context, in *pb.CreateBookRequest) 
     AuthorId:    book.AuthorID,
   }, nil
 }
+
+func (b *BookService) GetBooks(ctx context.Context, in *pb.BlankBook) (*pb.BookList, error) {
+	books, err := b.BookDB.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*pb.Book, len(books))
+	for i, book := range books {
+		result[i] = &pb.Book{
+      Id:          book.ID,
+      Name:        book.Name,
+      Isbn:        book.ISBN,
+      AuthorId:    book.AuthorID,
+		}
+	}
+
+	return &pb.BookList{
+    Books: result,
+	}, nil
+}
