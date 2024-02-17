@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: proto/book_author.proto
+// source: proto/author.proto
 
 package pb
 
@@ -312,5 +312,5 @@ var AuthorService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "proto/book_author.proto",
+	Metadata: "proto/author.proto",
 }

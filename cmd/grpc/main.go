@@ -26,6 +26,8 @@ func main() {
 
 	authorDB := db.NewAuthor(database)
 	authorService := service.NewAuthorService(*authorDB)
+  bookDB := db.NewBook(database)
+	bookService := service.NewBookService(*bookDB)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -34,6 +36,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterAuthorServiceServer(grpcServer, authorService)
+  pb.RegisterBookServiceServer(grpcServer, bookService)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", ":"+port)
