@@ -7,11 +7,11 @@ import (
 )
 
 type Book struct {
-	db          *sql.DB
-	ID          string
-	Name        string
-  ISBN        string
-	AuthorID  string
+	db       *sql.DB
+	ID       string
+	Name     string
+	ISBN     string
+	AuthorID string
 }
 
 func NewBook(db *sql.DB) *Book {
