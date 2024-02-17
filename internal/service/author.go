@@ -90,3 +90,28 @@ func (a *AuthorService) CreateAuthorStream(stream pb.AuthorService_CreateAuthorS
   }
 }
 
+func (a *AuthorService) CreateAuthorStreamBidirectional(stream pb.AuthorService_CreateAuthorStreamBidirectionalServer) error {
+  for {
+    author, err := stream.Recv()
+    if err == io.EOF {
+      return nil
+    }
+    if err != nil {
+      return err
+    }
+
+    result, err := a.AuthorDB.Create(author.Name, author.Description)
+    if err != nil {
+      return err
+    }
+
+    err = stream.Send(&pb.Author{
+      Id:          result.ID,
+      Name:        result.Name,
+      Description: result.Description,
+    })
+    if err != nil {
+      return err
+    }
+  }
+}

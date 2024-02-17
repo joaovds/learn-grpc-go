@@ -26,6 +26,7 @@ message GetById {
 service AuthorService {
   rpc CreateAuthor(CreateAuthorRequest) returns (Author);
   rpc CreateAuthorStream(stream CreateAuthorRequest) returns (AuthorList);
+  rpc CreateAuthorStreamBidirectional(stream CreateAuthorRequest) returns (stream Author);
   rpc GetAuthors(Blank) returns (AuthorList);
   rpc GetAuthor(GetById) returns (Author);
 }
