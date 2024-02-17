@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthorServiceClient interface {
 	CreateAuthor(ctx context.Context, in *CreateAuthorRequest, opts ...grpc.CallOption) (*Author, error)
 	GetAuthors(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*AuthorList, error)
+	GetAuthor(ctx context.Context, in *GetById, opts ...grpc.CallOption) (*Author, error)
 }
 
 type authorServiceClient struct {
@@ -52,12 +53,22 @@ func (c *authorServiceClient) GetAuthors(ctx context.Context, in *Blank, opts ..
 	return out, nil
 }
 
+func (c *authorServiceClient) GetAuthor(ctx context.Context, in *GetById, opts ...grpc.CallOption) (*Author, error) {
+	out := new(Author)
+	err := c.cc.Invoke(ctx, "/pb.AuthorService/GetAuthor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthorServiceServer is the server API for AuthorService service.
 // All implementations must embed UnimplementedAuthorServiceServer
 // for forward compatibility
 type AuthorServiceServer interface {
 	CreateAuthor(context.Context, *CreateAuthorRequest) (*Author, error)
 	GetAuthors(context.Context, *Blank) (*AuthorList, error)
+	GetAuthor(context.Context, *GetById) (*Author, error)
 	mustEmbedUnimplementedAuthorServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedAuthorServiceServer) CreateAuthor(context.Context, *CreateAut
 }
 func (UnimplementedAuthorServiceServer) GetAuthors(context.Context, *Blank) (*AuthorList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAuthors not implemented")
+}
+func (UnimplementedAuthorServiceServer) GetAuthor(context.Context, *GetById) (*Author, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAuthor not implemented")
 }
 func (UnimplementedAuthorServiceServer) mustEmbedUnimplementedAuthorServiceServer() {}
 
@@ -120,6 +134,24 @@ func _AuthorService_GetAuthors_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthorService_GetAuthor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetById)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthorServiceServer).GetAuthor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.AuthorService/GetAuthor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthorServiceServer).GetAuthor(ctx, req.(*GetById))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthorService_ServiceDesc is the grpc.ServiceDesc for AuthorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var AuthorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAuthors",
 			Handler:    _AuthorService_GetAuthors_Handler,
+		},
+		{
+			MethodName: "GetAuthor",
+			Handler:    _AuthorService_GetAuthor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -12,37 +12,37 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-  _ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const defaultPort = "50051"
 
 func main() {
-  database, err := sql.Open("sqlite3", "./database.db")
-  if err != nil {
-    log.Fatal(err)
-  }
-  defer database.Close()
+	database, err := sql.Open("sqlite3", "./database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer database.Close()
 
-  authorDB := db.NewAuthor(database)
-  authorService := service.NewAuthorService(*authorDB)
+	authorDB := db.NewAuthor(database)
+	authorService := service.NewAuthorService(*authorDB)
 
-  port := os.Getenv("PORT")
-  if port == "" {
-    port = defaultPort
-  }
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
 
-  grpcServer := grpc.NewServer()
-  pb.RegisterAuthorServiceServer(grpcServer, authorService)
-  reflection.Register(grpcServer)
+	grpcServer := grpc.NewServer()
+	pb.RegisterAuthorServiceServer(grpcServer, authorService)
+	reflection.Register(grpcServer)
 
-  listener, err := net.Listen("tcp", ":"+port)
-  if err != nil {
-    log.Panic("failed to listen: %w", err.Error())
-  }
+	listener, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		log.Panic("failed to listen: %w", err.Error())
+	}
 
-  err = grpcServer.Serve(listener)
-  if err != nil {
-    log.Panic("failed to serve: %w", err.Error())
-  }
+	err = grpcServer.Serve(listener)
+	if err != nil {
+		log.Panic("failed to serve: %w", err.Error())
+	}
 }

@@ -19,7 +19,12 @@ message CreateAuthorRequest {
   string description = 2;
 }
 
+message GetById {
+  string id = 1;
+}
+
 service AuthorService {
   rpc CreateAuthor(CreateAuthorRequest) returns (Author);
   rpc GetAuthors(Blank) returns (AuthorList);
+  rpc GetAuthor(GetById) returns (Author);
 }
