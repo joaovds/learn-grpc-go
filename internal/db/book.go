@@ -77,3 +77,16 @@ func (b *Book) GetByAuthorID(authorID string) ([]Book, error) {
 
 	return books, nil
 }
+
+func (b *Book) GetById(id string) (Book, error) {
+	var book Book
+	err := b.db.QueryRow(
+		"SELECT id, name, isbn, author_id FROM books WHERE id = $1",
+		id,
+	).Scan(&book.ID, &book.Name, &book.ISBN, &book.AuthorID)
+	if err != nil {
+		return Book{}, err
+	}
+
+	return book, nil
+}

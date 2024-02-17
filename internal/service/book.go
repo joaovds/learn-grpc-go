@@ -52,3 +52,17 @@ func (b *BookService) GetBooks(ctx context.Context, in *pb.BlankBook) (*pb.BookL
     Books: result,
 	}, nil
 }
+
+func (b *BookService) GetBook(ctx context.Context, in *pb.GetByIdBook) (*pb.Book, error) {
+  book, err := b.BookDB.GetById(in.Id)
+  if err != nil {
+    return nil, err
+  }
+
+  return &pb.Book{
+    Id:          book.ID,
+    Name:        book.Name,
+    Isbn:        book.ISBN,
+    AuthorId:    book.AuthorID,
+  }, nil
+}
