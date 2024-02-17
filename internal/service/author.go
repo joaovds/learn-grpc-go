@@ -30,3 +30,23 @@ func (a *AuthorService) CreateAuthor(ctx context.Context, in *pb.CreateAuthorReq
 		Description: author.Description,
 	}, nil
 }
+
+func (a *AuthorService) GetAuthors(ctx context.Context, in *pb.Blank) (*pb.AuthorList, error) {
+  authors, err := a.AuthorDB.GetAll()
+  if err != nil {
+    return nil, err
+  }
+
+  result := make([]*pb.Author, len(authors))
+  for i, author := range authors {
+    result[i] = &pb.Author{
+      Id:          author.ID,
+      Name:        author.Name,
+      Description: author.Description,
+    }
+  }
+
+  return &pb.AuthorList{
+    Authors: result,
+  }, nil
+}

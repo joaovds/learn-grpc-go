@@ -2,10 +2,16 @@ syntax = "proto3";
 package pb;
 option go_package = "internal/pb";
 
+message Blank{}
+
 message Author {
   string id = 1;
   string name = 2;
   string description = 3;
+}
+
+message AuthorList {
+  repeated Author authors = 1;
 }
 
 message CreateAuthorRequest {
@@ -15,4 +21,5 @@ message CreateAuthorRequest {
 
 service AuthorService {
   rpc CreateAuthor(CreateAuthorRequest) returns (Author);
+  rpc GetAuthors(Blank) returns (AuthorList);
 }
